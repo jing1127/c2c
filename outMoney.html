@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>调账调入</title>
+		<link rel="stylesheet" href="css/style.css" />
+		<style>
+			.con_main{font-size:18px;margin:0 auto;margin-top:120px;padding-top:80px;border:1px solid #ccc;border-radius:8px;width:540px;background: #fff;}
+			.con_main li{display: flex;margin-bottom: 30px;}
+			.con_main li .con_lab{padding-right:10px;flex: 2;text-align: right;height: 30px;line-height: 30px;}
+			.con_main li .con_tex,.con_main li .con_sec{flex: 3;}
+			.con_main .con_tex input,.con_main .con_tex select{border-radius:4px;width:200px;outline: none;border:1px solid #ccc;height: 30px;text-indent: 8px;color: #454545;}
+			.con_btn,.yz{display: flex;padding-top:26px;}
+			.con_btn div,.yz div{flex: 2;padding-right: 10px;}
+			.con_btn .con_btn_yes,.yz .con_yz{padding:0;flex: 3;}
+			.con_btn .con_btn_yes div{margin-bottom:60px;background:#fe3636;padding:6px;border-radius:4px;color:#f2f2f2;width:120px;text-align: center;}
+			.con_btn .con_btn_yes div:hover{background: #Ff4f4f;}
+			.con_main .yz{margin:0;padding:0;}
+			.con_main .con_yz{color: #FE3636;position: relative;top:-16px;font-size: 16px;}
+			.spe{display: none;}
+			[v-cloak] {
+			        display: none;
+			    }
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="con_head">调账调出</div>
+			<div class="con_main">
+				<ul>
+					<li>
+						<div class="con_lab">商户号：</div>
+						<div class="con_tex">
+							<input type="text" id="merId" />
+						</div>
+					</li>
+					<li class="yz">
+						<div></div>
+						<div class="con_yz" id="merIdyz"></div>
+					</li>
+					<li>
+						<div class="con_lab">币种id：</div>
+						<div class="con_tex has">
+							<select id="moneyType">
+								<option v-cloak v-for="item in liLists" value="{{item.currencyType}}">{{item.enSimpleName}}</option>					
+							</select>
+						</div>
+						<div class="con_tex spe">
+							<select class="moneyType" disabled="disabled">
+							<option value="0">暂无币种</option>					
+						</select>
+						</div>
+						
+					</li>
+					<!--<li class="yz">
+						<div></div>
+						<div class="con_yz" id="moneyTypeyz"></div>
+					</li>-->
+					<li>
+						<div class="con_lab">转出数量：</div>
+						<div class="con_tex">
+							<input type="text" id="money" />
+						</div>
+					</li>
+					<li class="yz">
+						<div></div>
+						<div class="con_yz" id="moneyyz"></div>
+					</li>
+				</ul>
+				<input type="hidden" id="types" />
+				<div class="con_btn">
+					<div></div>
+					<div class="con_btn_yes" id="btn1"><div>确认调出</div></div>
+				</div>
+			</div>
+		</div>
+		<script src="js/jquery-3.2.1.js"></script>		
+    <script src="js/vue.min.js"></script>
+		<script>
+			var vm=new Vue({
+	             el:".con_main",
+	             data:{
+	                 liLists:[],
+	             }
+	         	});
+		         $.ajax({
+					type:"post",
+					url:"http://192.168.2.14:80/agentTrade/CurrencyList",
+					data:{
+					
+					},
+					success:function(data){
+						console.log(data.resultData);
+						if(data.resultData==6){
+							$(".has").css("display","none");
+							$(".spe").css("display","block");
+							$("#types").val(1);
+						}else{
+							$(".has").css("display","block");
+							$(".spe").css("display","none");
+							vm.liLists=data.resultData;
+						}
+					}
+	       	})
+			$("#merId").blur(function(){
+				if($("#merId").val()==""){
+	    			$("#merIdyz").html("商户号不能为空!");
+		    	}else{
+		    		$("#merIdyz").html("");
+		    	}
+			})
+			$("#money").blur(function(){
+				var allReg=/^[0-9]+(.[0-9]{1,3})?$/;
+				if($("#money").val()==""){
+	    			$("#moneyyz").html("金额不能为空!");
+		    	}else if(parseFloat($("#money").val())<=0){
+		    		$("#moneyyz").html("金额必须大于0!");
+		    	}else if(!allReg.test($("#money").val())){
+	    			$("#moneyyz").html("金额必须为数字,小数最多三位!");	
+	    		}
+				else{
+		    		$("#moneyyz").html("");
+		    	}
+			})
+			$("#merId").focus(function(){
+				$("#merIdyz").html("");
+			})
+			$("#money").focus(function(){
+				$("#moneyyz").html("");
+			})
+			function btnCheck(){
+			var allReg=/^[0-9]+(.[0-9]{1,3})?$/;
+			var moneyReg=/^[a-zA-Z0-9_]+$/;
+	    	//验证格式
+	    	if($("#merId").val()==""){
+	    		$("#merIdyz").html("商户号不能为空!");
+	    		return false;
+	    	}else if($("#money").val()==""){
+	    		$("#moneyyz").html("金额不能为空!");
+	    		return false;
+	    	}else if(parseFloat($("#money").val())<=0){
+	    		$("#moneyyz").html("金额必须大于0!");
+	    		return false;
+	    	}else if(!allReg.test($("#money").val())){
+	    		$("#moneyyz").html("金额必须为数字,小数最多三位!");
+	    		return false;
+	    	}
+	    	else{
+	    		return true;
+	    	}
+    	}
+			$('#btn1').bind('click', function(){
+				btnCheck();
+				if(btnCheck()){
+					$(this).unbind('click');
+					if($("#types").val()==1){
+						var category1=$(".moneyType").val();
+					}else{
+						category1=$("#moneyType option:selected").val();
+					}
+					$.ajax({
+						type:"post",
+						url:"http://192.168.2.14:80/agentTrade/transferCurrency",
+						data:{
+							"merchant":$("#merId").val(),
+							"category":category1,
+							"money":$("#money").val(),
+							"type":2
+						},
+						success:function(data){
+//							alert(data.resultCode);
+//							alert(data.resultMsg);
+							var resultCode=data.resultCode;
+							var resultMsg=data.resultMsg;
+							if(resultCode==0000){
+								location.href="success.html?resultMsg="+encodeURI(resultMsg);
+							}else{
+								location.href="fail.html?resultMsg="+encodeURI(resultMsg);
+							}
+						},
+						error:function(){
+							console.log("操作失败!");
+						}
+					});
+				}	
+			});
+		</script>
+	</body>
+</html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>更改币种</title>
+		<script type="text/javascript" src="js/jquery-3.2.1.js" ></script>
+		<link rel="stylesheet" href="css/style.css" />
+		<style>
+			.container .con_main{margin-top:40px;margin-left:50px;}
+			.con_main li{width:100%;display: flex;margin-bottom: 26px;}
+			.con_main li .con_main_lab{flex: 2;height:30px;line-height: 30px;}                               
+			.con_main li .con_main_tex{flex: 5;}
+			.con_main li .con_main_tip{flex: 5;color: #DE770F;height:30px;line-height: 30px; }
+			.con_main .con_main_tex input,.con_main .con_main_tex select{width:88%;height: 30px;border:1px solid #999;text-indent:8px;outline:none;border-radius: 6px;}
+			.con_main .con_main_tex textarea{padding-top:6px;width:88%;height: 160px;border:1px solid #999;text-indent:8px;outline:none;border-radius: 6px;resize: none;}
+			.con_btn{padding-top:26px;}
+			.con_btn .con_btn_sub{margin:0 auto;margin-bottom:60px;background:#fe3636;cursor:pointer;padding:6px;border-radius:4px;color:#f2f2f2;width:120px;text-align: center;}
+			.con_btn .con_btn_sub:hover{background: #Ff4f4f;}
+			.con_main_tex .add_img{background: #FE3636;color: #f2f2f2;width:150px;height: 30px;text-align: center;line-height: 30px;border-radius: 6px;}
+		</style>
+	</head>
+	<body>
+		<form id="form1" name="form1" action="http://192.168.2.143:8080/agentTrade/updateCurryency" accept-charset="UTF-8" type="post">
+		<div class="container">
+			<div class="con_head">更改币种</div>
+			<div class="con_main">
+				<ul>
+					<li>
+						<div class="con_main_lab">
+							英文简称：
+						</div>
+						<div class="con_main_tex">
+							<input type="text" onkeyup="this.value=this.value.toUpperCase()" name="enSimpleName" id="enSimpleName" />
+						</div>
+						<div class="con_main_tip">
+							大写 必须填写:但不能填写关键字比如叫 ASC DESC
+						</div>
+					</li>
+					<li>
+						<div class="con_main_lab">
+							英文名称：
+						</div>
+						<div class="con_main_tex">
+							<input type="text" name="enName" id="enName" />
+						</div>
+						<div class="con_main_tip">
+							
+						</div>
+					</li>
+					<li>
+						<div class="con_main_lab">
+							中文名称：
+						</div>
+						<div class="con_main_tex">
+							<input type="text" name="chName" id="chName" />
+						</div>
+						<div class="con_main_tip">
+							必须填写:不然很多地方看不到
+						</div>
+					</li>
+					<li>
+						<div class="con_main_lab">
+							币种id：
+						</div>
+						<div class="con_main_tex">
+							<input type="text" value="" id="moneyType" name="currencyType" />
+						</div>
+						<div class="con_main_tip">
+							必填，币种唯一标识
+						</div>
+					</li>
+					<!--<li>
+						<div class="con_main_lab">
+							图标：
+						</div>
+						<div class="con_main_tex">
+							<input type="file" id="file" name="currencyLogo" style="display: none;" />
+							<label for="file" >
+								<div class="add_img">点击添加图片</div>
+							</label>
+						</div>
+						<div class="con_main_tip">
+							80px*80px
+						</div>
+					</li>-->
+					<li>
+						<div class="con_main_lab">
+							钱包服务器ip：
+						</div>
+						<div class="con_main_tex">
+							<input type="text" name="serverIp" id="serverIp" />
+						</div>
+						<div class="con_main_tip">
+							对接钱包使用 认购币类型的 不用填写
+						</div>
+					</li>
+					<li>
+						<div class="con_main_lab">
+							钱包服务器端口：
+						</div>
+						<div class="con_main_tex">
+							<input type="text" name="serverPort" id="serverPort" />
+						</div>
+						<div class="con_main_tip">
+							对接钱包使用 认购币类型的 不用填写
+						</div>
+					</li>
+					<li>
+						<div class="con_main_lab">
+							服务器用户名：
+						</div>
+						<div class="con_main_tex">
+							<input type="text" name="serverUsername" id="serverUsername" />
+						</div>
+						<div class="con_main_tip">
+							对接钱包使用 认购币类型的 不用填写
+						</div>
+					</li>
+					<li>
+						<div class="con_main_lab">
+							钱包服务器密码：
+						</div>
+						<div class="con_main_tex">
+							<input type="password" name="serverPassword" id="serverPassword" />
+						</div>
+						<div class="con_main_tip">
+							对接钱包使用 认购币类型的 不用填写
+						</div>
+					</li>
+					<li>
+						<div class="con_main_lab">
+							挂单比例：
+						</div>
+						<div class="con_main_tex">
+							<input type="text" name="pendingOrdersProportion" id="pending" />
+						</div>
+						<div class="con_main_tip">
+							0-1之间的小数，只能挂单当前用户的多少
+						</div>
+					</li>
+					<li>
+						<div class="con_main_lab">
+							今日最多卖出：
+						</div>
+						<div class="con_main_tex">
+							<input type="text" name="currentDayMaxSellProportion" id="current" />
+						</div>
+						<div class="con_main_tip">
+							0-1之间，今日只能卖出账号余额的百分币
+						</div>
+					</li>
+					<li>
+						<div class="con_main_lab">
+							转入状态：
+						</div>
+						<div class="con_main_tex">
+							<select name="status">
+								<option value="1">正常转入</option>
+							</select>
+						</div>
+						<div class="con_main_tip">
+							
+						</div>
+					</li>
+					<li>
+						<div class="con_main_lab">
+							确认次数：
+						</div>
+						<div class="con_main_tex">
+							<input type="text" value="1" name="confirmNum" id="confirm" />
+						</div>
+						<div class="con_main_tip">
+							转出确认次数必须填写，且大于0
+						</div>
+					</li>
+					<!--<li>
+						<div class="con_main_lab">
+							本次转入数量：
+						</div>
+						<div class="con_main_tex">
+							<input type="text" value="0" name="number" id="number" />
+						</div>
+						<div class="con_main_tip">
+							本次转入数量必须填写，且大于0
+						</div>
+					</li>-->
+					<li>
+						<div class="con_main_lab">
+							最小转出数量：
+						</div>
+						<div class="con_main_tex">
+							<input type="text" value="0.01" name="minTurnoutNumber" id="minTur" />
+						</div>
+						<div class="con_main_tip">
+							大于0
+						</div>
+					</li>
+					<li>
+						<div class="con_main_lab">
+							最大转出数量:
+						</div>
+						<div class="con_main_tex">
+							<input type="text" value="1000" name="maxTurnoutNumber" id="maxTur" />
+						</div>
+						<div class="con_main_tip">
+							大于1000
+						</div>
+					</li>
+					<li>
+						<div class="con_main_lab">
+							转出状态:
+						</div>
+						<div class="con_main_tex">
+							<select name="turnoutStatus">
+								<option value="1">正常转出</option>
+							</select>
+						</div>
+						<div class="con_main_tip">
+							
+						</div>
+					</li>
+					<li>
+						<div class="con_main_lab">
+							转出自动：
+						</div>
+						<div class="con_main_tex">
+							<input type="text" value="10" name="turnoutAutomatic" id="turnoutAutomatic" />
+						</div>
+						<div class="con_main_tip">
+							推荐:正数且大于10(小于这个数自动转出,大于这个数后台审核)
+						</div>
+					</li>
+					<li>
+						<div class="con_main_lab">
+							单价：
+						</div>
+						<div class="con_main_tex">
+							<input type="text"  name="unitPrice" id="price" />
+						</div>
+						<div class="con_main_tip">
+							必须填写且大于0
+						</div>
+					</li>
+					<li>
+						<div class="con_main_lab">
+							买入费率：
+						</div>
+						<div class="con_main_tex">
+							<input type="text"  name="purate" id="buy" />
+						</div>
+						<div class="con_main_tip">
+							0-1之间的小数
+						</div>
+					</li>
+					<li>
+						<div class="con_main_lab">
+							卖出费率：
+						</div>
+						<div class="con_main_tex">
+							<input type="text"  name="serate" id="buyback" />
+						</div>
+						<div class="con_main_tip">
+							0-1之间的小数
+						</div>
+					</li>
+					<li>
+						<div class="con_main_lab">
+							平台费率：
+						</div>
+						<div class="con_main_tex">
+							<input type="text"  name="rate" id="rate" />
+						</div>
+						<div class="con_main_tip">
+							必须填写且大于0
+						</div>
+					</li>
+					<li>
+						<div class="con_main_lab">
+							详细介绍：
+						</div>
+						<div class="con_main_tex">
+							<textarea name="description" id="description"></textarea>
+						</div>
+						<div class="con_main_tip">
+							
+						</div>
+					</li>
+				</ul>
+				<div class="con_btn">
+					<div class="con_btn_sub">确认更改</div>
+				</div>
+			</div>
+		</div>
+		<div class="mt" id="modal1">
+						    <div class="mt-dialog">
+						        <div class="mt-content">
+						        	<span class="clos" id="clos">&times;</span>
+						            <h4>小提示：</h4>
+						                <div class="mone">  
+						                </div>
+						                <p id="tips"></p>
+						                <div class="yi">
+						                	<span class="close" id="clos1">关闭</span>
+						                </div>
+						                
+						        </div>
+						    </div>
+		</div>
+		</form>
+		<script type="text/javascript" src="js/close.js" ></script>
+		<script>
+			$(function(){
+				//获取地址栏
+		    	function UrlSearch()
+					{                 
+					    var name,value;
+					    var str=location.href; //取得整个地址栏
+					    var num=str.indexOf("?")
+					    str=str.substr(num+1); //取得所有参数   stringvar.substr(start [, length ]
+					    var arr=str.split("&"); //各个参数放到数组里
+					    for(var i=0;i < arr.length;i++){
+					        num=arr[i].indexOf("=");
+					        if(num>0){
+					            name=arr[i].substring(0,num);
+					            value=arr[i].substr(num+1);
+					            this[name]=value;
+					        }
+					    }
+					}
+					var Request=new UrlSearch();
+					var currencyType=Request.currencyType;
+				$.ajax({
+						type:"post",
+						url:"http://192.168.2.143:8080/agentTrade/selectById",
+						data:{
+							currencyType:currencyType
+						},
+						success:function(data){
+							console.log(data);
+							$("#enSimpleName").val(data.resultData.enSimpleName);
+							$("#enName").val(data.resultData.enName);
+							$("#chName").val(data.resultData.chName);
+							$("#moneyType").val(data.resultData.currencyType);
+							$("#serverIp").val(data.resultData.serverIp);
+							$("#serverPort").val(data.resultData.serverPort);
+							$("#serverUsername").val(data.resultData.serverUsername);
+							$("#serverPassword").val(data.resultData.serverPassword);
+							$("#pending").val(data.resultData.pendingOrdersProportion);
+							$("#current").val(data.resultData.currentDayMaxSellProportion);
+							$("#confirm").val(data.resultData.confirmNum);
+							$("#minTur").val(data.resultData.minTurnoutNumber);
+							$("#maxTur").val(data.resultData.maxTurnoutNumber);
+							$("#turnoutAutomatic").val(data.resultData.turnoutAutomatic);
+							$("#price").val(data.resultData.unitPrice);
+							$("#buy").val(data.resultData.purate);
+							$("#buyback").val(data.resultData.serate);
+							$("#rate").val(data.resultData.rate);
+							$("#description").val(data.resultData.description);	
+						},
+						error:function(){
+							
+							console.log("操作失败!");
+						}
+					});
+				$("#confirm").blur(function(){
+					if(parseFloat($("#confirm").val())>1){
+						$("#confirm").val(Math.floor($("#confirm").val()));
+					}
+				})
+				function btnCheck(){
+					var simReg=/[a-z]/;
+					var chReg=/^[\u4e00-\u9fa5]*$/;
+//					var numReg=/^0\.[0-9]\d*$/ ;
+					var allReg=/^[0-9]+(.[0-9]{1,3})?$/;
+					var moneyReg=/^[a-zA-Z0-9_]+$/;
+					var buyReg=/^[0]+(.[0-9]{1,4})?$/;
+					var priceReg=/^[0-9]+(.[0-9]{1,4})?$/;
+			    	//验证格式
+			    	if($("#enSimpleName").val()==""){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("英文简称不能为空!");
+			    		return false;
+			    	}else if(!simReg.test($("#enSimpleName").val())){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("英文简称必须为字母!");
+			    		return false;
+			    	}else if($("#chName").val()==""){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("中文名称不能为空!");
+			    		return false;
+			    	}else if(!chReg.test($("#chName").val())){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("中文名称只能输入汉字!");
+			    		return false;
+			    	}else if($("#moneyType").val()==""){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("币种id不能为空!");
+			    		return false;
+			    	}else if(!moneyReg.test($("#moneyType").val())){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("币种id只能包含数字，字母和下划线!");
+			    		return false;
+			    	}else if($("#pending").val()==""){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("挂单比例不能为空!");
+			    		return false;
+			    	}else if(!buyReg.test($("#pending").val())){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("挂单比例必须是0到1之间的小数,且最多四位数!");
+			    		return false;
+			    	}else if($("#current").val()==""){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("今日最多卖出不能为空!");
+			    		return false;
+			    	}else if(!buyReg.test($("#current").val())){ 
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("今日最多卖出必须是0到1之间的小数,且最多四位数!");
+			    		return false;
+			    		
+			    	}
+//			    	else if($("#number").val()==""){
+//			    		$(".mt").css("display","block");
+//			    		$("#tips").html("本次转入数量不能为空!");
+//			    		return false;
+//			    	}else if(parseInt($("#number").val())<0){
+//			    		$(".mt").css("display","block");
+//			    		$("#tips").html("本次转入数量不能小于0!");
+//			    		return false;
+//			    	}else if(!allReg.test($("#number").val())){
+//			    		$(".mt").css("display","block");
+//			    		$("#tips").html("数量必须为数字,小数最多三位!");
+//			    		return false;
+//			    	}
+			    	else if($("#confirm").val()==""){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("次数不能为空!");
+			    		return false;
+			    	}else if(parseInt($("#confirm").val())<=0){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("次数必须大于0!");
+			    		return false;
+			    	}else if(!allReg.test($("#minTur").val())){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("数量必须为数字,小数最多三位!");
+			    		return false;
+			    	}else if(parseFloat($("#minTur").val())<=0){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("最小转出数量必须大于0!");
+			    		return false;
+			    	}else if(!allReg.test($("#maxTur").val())){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("数量必须为数字,小数最多三位!");
+			    		return false;
+			    	}else if(parseFloat($("#maxTur").val())<1000){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("最大转出数量必须大于1000！");
+			    		return false;
+			    	}else if($("#price").val()==""){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("单价不能为空!");
+			    		return false;
+			    	}else if(!priceReg.test($("#price").val())){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("单价大于0，且最多四位小数!");
+			    		return false;
+			    	}else if($("#buy").val()==""){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("买入费率不能为空!");
+			    		return false;
+			    	}else if(!buyReg.test($("#buy").val())){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("买入费率为0到1之间的小数，且最多四位小数!");
+			    		return false;
+			    	}else if($("#buyback").val()==""){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("卖出费率不能为空!");
+			    		return false;
+			    	}else if(!buyReg.test($("#buyback").val())){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("卖出费率为0到1之间的小数，且最多四位小数!");
+			    		return false;
+			    	}else if($("#rate").val()==""){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("平台费率不能为空!");
+			    		return false;
+			    	}else if(!buyReg.test($("#rate").val())){
+			    		$(".mt").css("display","block");
+			    		$("#tips").html("平台费率位0到1之间的小数，且最多四位小数!");
+			    		return false;
+			    	}
+			    	else{
+			    		return true;
+			    	}
+	    		}
+				$(".con_btn_sub").click(function(){
+					if(btnCheck()){
+						
+						$("#form1").submit();
+						$("con_btn_sub").attr("readonly","true");
+					}
+				})
+			})
+		</script>
+	</body>
+</html>

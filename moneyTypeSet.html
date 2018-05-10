@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" /> 
+		<title>币种设置</title>
+		<link rel="stylesheet" href="css/style.css" />
+		<style>
+			.con_main{font-size:18px;margin:0 auto;margin-top:120px;padding-top:80px;border:1px solid #ccc;border-radius:8px;width:540px;background: #fff;}
+			.con_main li{display: flex;margin-bottom: 30px;}
+			.con_main li .con_lab{padding-right:10px;flex: 2;text-align: right;height: 30px;line-height: 30px;}
+			.con_main li .con_tex,.con_main li .con_sec{flex: 3;}
+			.con_main .con_tex input,.con_main .con_tex select{border-radius:4px;width:200px;outline: none;border:1px solid #ccc;height: 30px;text-indent: 8px;color: #454545;}
+			.con_btn,.yz{display: flex;padding-top:26px;}
+			.con_btn div,.yz div{flex: 2;padding-right: 10px;}
+			.con_btn .con_btn_yes,.yz .con_yz{padding:0;flex: 3;}
+			.con_btn .con_btn_yes div{margin-bottom:60px;background:#fe3636;padding:6px;border-radius:4px;color:#f2f2f2;width:120px;text-align: center;}
+			.con_btn .con_btn_yes div:hover{background: #Ff4f4f;}
+			.con_main .yz{margin:0;padding:0;}
+			.con_main .con_yz{color: #FE3636;position: relative;top:-16px;font-size: 16px;}
+			.spe{display: none;}
+			[v-cloak] {
+			        display: none;
+			    }
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="con_head">币种设置</div>
+			<div class="con_main">
+				<ul>
+					
+					<li>
+						<div class="con_lab">币种id：</div>
+						<div class="con_tex has">
+							<select id="moneyType">
+								<option v-cloak v-for="item in liLists" value="{{item.currencyType}}">{{item.enSimpleName}}</option>					
+							</select>
+						</div>
+						<div class="con_tex spe">
+							<select class="moneyType" disabled="disabled">
+							<option value="0">暂无币种</option>					
+						</select>
+						</div>	
+					</li>
+					<li>
+						<div class="con_lab">买入费率：</div>
+						<div class="con_tex">
+							<input type="text" id="buyRate" />
+						</div>
+						
+					</li>
+					<li class="yz">
+						<div></div>
+						<div class="con_yz" id="buyRateyz"></div>
+					</li>
+					<li>
+						<div class="con_lab">卖出费率：</div>
+						<div class="con_tex">
+							<input type="text" id="backBuy" />
+						</div>
+						
+					</li>
+					<li class="yz">
+						<div></div>
+						<div class="con_yz" id="backBuyyz"></div>
+					</li>
+				</ul>
+				<input type="hidden" id="types" />
+				<div class="con_btn">
+					<div></div>
+					<div class="con_btn_yes" id="btn1"><div>提交</div></div>
+				</div>
+			</div>
+		</div>
+		<script src="js/jquery-3.2.1.js"></script>		
+    <script src="js/vue.min.js"></script>
+		<script>
+			var vm=new Vue({
+	             el:".con_main",
+	             data:{
+	                 liLists:[],
+	             }
+	         	});
+		         $.ajax({
+					type:"post",
+					url:"http://192.168.2.14:80/agentTrade/CurrencyList",
+					data:{
+					
+					},
+					success:function(data){
+						console.log(data.resultData);
+						if(data.resultData==6){
+							$(".has").css("display","none");
+							$(".spe").css("display","block");
+							$("#types").val(1);
+							
+						}else{
+							$(".has").css("display","block");
+							$(".spe").css("display","none");
+							vm.liLists=data.resultData;
+						}
+					}
+	       	})
+			$("#buyRate").blur(function(){
+				var buyReg=/^[0]+(.[0-9]{1,4})?$/;
+				if($("#buyRate").val()==""){
+				$("#buyRateyz").html("买入费率不能为空!");
+				}else if(!buyReg.test($("#buyRate").val())){
+					$("#buyRateyz").html("买入费率为0到1之间的小数，且最多四位小数!");
+				}else{
+					$("#buyRateyz").html("");
+				}
+			})
+			$("#backBuy").blur(function(){
+				var buyReg=/^[0]+(.[0-9]{1,4})?$/;
+				if($("#backBuy").val()==""){
+				$("#backBuyyz").html("卖出费率不能为空!");
+				}else if(!buyReg.test($("#backBuy").val())){
+					$("#backBuyyz").html("卖出费率为0到1之间的小数，且最多四位小数!");
+				}else{
+					$("#backBuyyz").html("");
+				}
+			})
+			$("#buyRate").focus(function(){
+				$("#buyRateyz").html("");
+			})
+			$("#backBuy").focus(function(){
+				$("#backBuyyz").html("");
+			})
+			function btnCheck(){
+			var allReg=/^[0-9]+(.[0-9]{1,3})?$/;
+			var moneyReg=/^[a-zA-Z0-9_]+$/;
+			var priceReg=/^[0-9]+(.[0-9]{1,4})?$/;
+			var buyReg=/^[0]+(.[0-9]{1,4})?$/;
+	    	if($("#buyRate").val()==""){
+				$("#buyRateyz").html("买入费率不能为空!");
+	    		return false;
+			}else if(!buyReg.test($("#buyRate").val())){
+				$("#buyRateyz").html("买入费率为0到1之间的小数，且最多四位小数!");
+				return false;
+			}else if($("#backBuy").val()==""){
+				$("#backBuyyz").html("卖出费率不能为空!");
+	    		return false;
+			}else if(!buyReg.test($("#backBuy").val())){
+				$("#backBuyyz").html("卖出费率为0到1之间的小数，且最多四位小数!");
+				return false;
+			}
+	    	else{
+	    		return true;
+	    	}
+    	}
+			$("#btn1").click(function(){
+				btnCheck();
+				if(btnCheck()){
+						if($("#types").val()==1){
+							var category1=$(".moneyType").val();
+						}else{
+							category1=$("#moneyType option:selected").val();
+						}
+					$.ajax({
+						type:"post",
+						url:"http://192.168.2.14:80/agentTrade/updateCurrencyPriceAndRate",
+						data:{
+							"category":category1,
+							"buyRate":$("#buyRate").val(),
+							"sellRate":$("#backBuy").val()
+						},
+						success:function(data){
+							console.log(data.resultCode);
+							console.log(data.resultMsg);
+							var resultCode=data.resultCode;
+							var resultMsg=data.resultMsg;
+//							if(resultCode==0000){
+//								location.href="success.html?resultMsg="+encodeURI(resultMsg);
+//							}else{
+//								location.href="fail.html?resultMsg="+encodeURI(resultMsg);
+//							}
+						},
+						error:function(){
+							console.log("操作失败!");
+						}
+					});
+				}
+			})
+			
+		</script>
+	</body>
+</html>

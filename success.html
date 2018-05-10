@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>成功</title>
+		<script type="text/javascript" src="js/jquery-3.2.1.js" ></script>
+		<link rel="stylesheet" href="css/style.css" />
+		<style>
+			.container .con_main{box-shadow: 2px 2px 5px #b2b2b2;border:2px solid #eee;text-align:center;margin:0 auto;margin-top:120px;height:300px;border-radius:8px;width:540px;background: #fff;}
+			.con_main img{width:160px;height: 160px;margin-top:40px;}
+			.con_main .succ{color: #FE3636;font-size: 20px;margin-top:28px;letter-spacing: 3px;}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="con_head"></div>
+			<div class="con_main">
+				<img src="img/success.png" />
+				<div class="succ"></div>
+			</div>
+		</div>
+		<script>
+			//获取地址栏
+    		function UrlSearch(){
+				    var name,value;
+				    var str=location.href; //取得整个地址栏
+				    var num=str.indexOf("?")
+				    str=str.substr(num+1); //取得所有参数   stringvar.substr(start [, length ]
+				    var arr=str.split("&"); //各个参数放到数组里
+				    for(var i=0;i < arr.length;i++){
+				        num=arr[i].indexOf("=");
+				        if(num>0){
+				            name=arr[i].substring(0,num);
+				            value=arr[i].substr(num+1);
+				            this[name]=value;
+				        }
+				    }
+				}
+			var Request=new UrlSearch(); //实例化，调用上面的函数。
+			var resultMsg=Request.resultMsg;
+			$(".succ").html(decodeURI(resultMsg));
+			$(".con_head").html(decodeURI(resultMsg));
+		</script>
+	</body>
+</html>

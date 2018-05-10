@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>会员管理</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+       html,body,div,span,i,img,ul,li{margin:0;padding:0;}
+       html,body{width:100%;height:100%;background:#eee;}
+       input{border:none;outline:none;}
+       ul,li{list-style:none;}
+      .public_main{width:100%;box-sizing:border-box;margin-bottom:30px;}
+      .search_box{width:100%;}
+      .input_box{width:100%;overflow:hidden;box-sizing:border-box;padding:0 20px;text-align: center;}
+      .input_box div{float:left;width:19%;height:40px;margin:25px 0 0 15px;}
+      .input_box div:first-child{margin-left:0px;}
+      .input_box div input{width:100%;height:100%;box-sizing:border-box;padding:3px 9px;}
+      .query_btn{width:160px;height:40px;position:relative;left:50%;margin:20px 0 0 -80px;line-height:40px;color:#fff;font-size:18px;text-align:center;}
+      .tab_box{width:100%;margin:15px 0 0 0;}
+      .tab_box_content{width:100%;border-radius:5px;box-sizing:border-box;padding:10px;text-align:center;margin:10px 0 0 0;}
+      .tab_box_content li:first-child{width:100%;height:40px;line-height:40px;background:#fff;border-radius: 5px;color: #333;}
+      .tab_box_title{margin-bottom:15px;}
+      .tab_box_list{width:100%;height:60px;line-height:60px;background:#fff;box-sizing:border-box;padding:3px;border-radius: 5px;overflow:hidden;vertical-align:middle;}
+      .tab_box_content li span{word-wrap:break-word;float:left;display:block;width:14.28%;height:100%;color:#323334;font-size:15px;}
+      .tab_box_content .tab_box_title span{color: #333;}
+      .business_owner{line-height:normal;box-sizing:border-box;padding:0 4px  0 4px;text-align:left;}
+      .tab_box_list:nth-child(odd){background:#f2f5fa;}
+      /*.tab_box_list span:last-child{color:#fe3e3e;}*/
+      .business_timer{line-height:normal;box-sizing:border-box;padding:10px 0;}
+	  .footer_page{margin-top:20px;text-align: center;display: none;}
+	  .footer_page .page_up,.footer_page .page_down,.footer_page .page_goto{cursor:pointer;background: #FE3636;padding:6px 10px;border-radius:4px;color: #f2f2f2;}
+      .footer_page .page_up:hover,.footer_page .page_down:hover,.footer_page .page_goto:hover{background: #Ff4f4f;}
+      .footer_page .page_num input{text-align:center;position:relative;top:-2px;width:30px;border: 1px solid #999;height: 24px;}
+      .footer_page .page_goto{margin-left: 60px;}
+      .page_count{margin-left: 20px;}
+      .page_count .data_all,.page_count .page_now,.page_count .page_all{color: #FE3636;font-size: 20px;}
+      .none{height:200px;line-height: 200px;display: none;}
+      .merId{width:26% !important;}
+      .phone{width:20% !important;}
+      .level{width:14% !important;}
+      .vips{width:20% !important;}
+      .sets{width:20% !important;}
+      .input_box div{width:36%;}
+      .input_box div input,.input_box div select{border-radius: 4px;border:1px solid #ccc;outline: none;background: #fcfcfc;}
+      .query_btn{background: #FE3636;border-radius: 4px;}
+      .changes{border:1px solid #b2b2b2;padding:6px 8px;}
+      [v-cloak] {
+			        display: none;
+			    }
+	  .mt1,.mts{width:100%;height:100%; position: fixed;left: 0;top: 0;background: rgba(0,0,0, 0.5); z-index: 999;display: none;}  
+	  /*.mt-dialog {width: 260px;margin: 150px auto;}*/
+	  .mt-dialog {position:absolute;width:280px;height:182px;top:50%;left:50%;margin:-182px 0 0 -140px;}
+	  .mt-content { background:  #fafafa;   border-radius: 6px; padding: 16px;position:relative; top:100px;}
+	  .mt-content h4 { margin-top:6px;margin-bottom: 46px;font-family:helvetica;font-size: 16px;color: #F04124;padding-bottom: 16px; border-bottom: 1px solid #999;}
+	  .mt-content p{ font-size: 16px; color: #454545;padding-bottom: 20px;text-align: center;}
+	  .yi{text-align: center;margin-top:20px;margin-bottom: 10px;}
+	  .clos{float: right;font-size: 18px;font-weight: bold;color: #454545;cursor: pointer;}
+    </style>
+</head>
+<body>
+        <div class="public_main">
+          <div class="con_head">会员管理</div>
+           <!-- 查询顶部 -->
+            <div class="search_box">
+                <div class="input_box">   
+                    <div><input type="text" placeholder="商户号" id="merId"></div>
+                    <div><input type="text" placeholder="手机号" id="phone"></div>
+                </div>
+                <div class="query_btn" id="selec_btn">查询</div>
+            </div>
+            <!-- 表格部分 -->
+            <div class="tab_box">
+               <ul class="tab_box_content">
+                   <li class="tab_box_title">
+                    <span class="merId">商户号</span>
+                    <span class="phone">手机号</span> 
+                    <span class="level">等级</span>
+                    <span class="vips">VIP</span>
+                    <span class="sets">操作</span>
+                   </li>
+                   <li class="tab_box_list" v-for="list in liLists">
+                        <span class="merId">{{list.orderNo}}</span>
+                        <span class="phone">{{list.remark}}</span>
+                        <span class="level">{{list.payType}}</span>
+                        <span class="vips" id="noVip" v-show="list.state==1">
+                        	<input class="changes" type="button" value="开通VIP" @click="noVip($index)" />
+                        </span>
+                        <span class="vips" id="yesVip" v-show="list.state==2">
+                        	<input class="changes" type="button" value="撤销VIP" @click="yesVip($index)" />
+                        </span>
+                        <span class="sets" id="chafeng" v-show="list.set==1">
+                        	<input class="changes" type="button" value="查封" @click="chafeng($index)" />
+                        </span>
+                        <span class="sets" id="jiefeng" v-show="list.set==2">
+                        	<input class="changes" type="button" value="解封" @click="jiefeng($index)" />
+                        </span>
+                        <input type="hidden" id="types" />
+                        <input type="hidden" id="keyHide" />
+                   </li>
+                   <li class="none">暂时还没有数据哦~</li>
+               </ul>
+               <div class="mt" id="modal1">
+						    <div class="mt-dialog">
+						        <div class="mt-content">
+						        	<span class="clos" id="clos">&times;</span>
+						            <h4>小提示：</h4>
+						                <div class="mone">  
+						                </div> 
+						                <p id="tips"></p>
+						                <div class="yi">
+						                	<span class="close" @click="vipSub()">确认</span>
+						                </div>
+						                
+						        </div>
+						    </div>
+				</div>
+				<div class="mts" id="modals">
+						    <div class="mt-dialog">
+						        <div class="mt-content">
+						        	<span class="clos" id="closs">&times;</span>
+						            <h4>小提示：</h4>
+						                <div class="mone">  
+						                </div> 
+						                <p id="tipss"></p>
+						                <div class="yi">
+						                	<span class="close" @click="chafengSub()">确认</span>
+						                </div>
+						                
+						        </div>
+						    </div>
+				</div>
+				<div class="mt1" id="modal2">
+						    <div class="mt-dialog">
+						        <div class="mt-content">
+						        	<span class="clos" id="clos2">&times;</span>
+						            <h4>小提示：</h4>
+						                <div class="mone">  
+						                </div> 
+						                <p id="tips1"></p>
+						                <div class="yi">
+						                	<span class="close"  id="clos1">关闭</span>
+						                </div>
+						                
+						        </div>
+						    </div>
+				</div>
+				
+            </div>
+            <div class="footer_page">
+            	<span class="page_up" id="page_up">上一页</span>
+            	<span class="page_down" id="page_down">下一页</span>
+            	<span class="page_goto" id="goto">GOTO</span>
+            	<span class="page_num">第 <input type="text" id="page_num" value="" /> 页</span>
+            	<span class="page_count"><span class="data_all"></span>条记录 <span class="page_now"></span>/<span class="page_all"></span>页</span>
+            </div>
+        </div>
+        
+    <script src="js/jquery-3.2.1.js"></script>		
+    <script src="js/vue.min.js"></script>
+    <script type="text/javascript" src="js/close.js" ></script>
+    <script>
+       $(function(){
+	       	var vm=new Vue({
+	             el:".tab_box",
+	             data:{
+	                 liLists:[],
+	             },
+	             methods:{
+	             	noVip : function(index){
+						console.log(index);
+						$("#types").val(1);
+						$("#keyHide").val(index);
+						$(".mt").css("display","block");	
+						$(".tips").html("确认开通VIP吗？");
+					},
+					yesVip : function(index){		
+						$("#types").val(2);
+						$("#keyHide").val(index);
+						$(".mt").css("display","block");
+						$(".tips").html("确认撤销VIP吗？");
+					},
+					chafeng : function(index){
+						$("#types").val(1);
+						$("#keyHide").val(index);
+						$(".mts").css("display","block");	
+						$(".tipss").html("确认查封该账号吗？");
+					},
+					jiefeng : function(index){
+						$("#types").val(2);
+						$("#keyHide").val(index);
+						$(".mts").css("display","block");	
+						$(".tipss").html("确认解封该账号吗？");
+					},
+					vipSub : function(){
+						var vipType=$("#types").val();
+						var index1=$("#keyHide").val();
+						var merchant=vm.liLists[index1].merchant;
+						console.log(vipType);
+						console.log(index1);
+						console.log(merchant); 
+						$.ajax({
+									type:"post",
+									url:"http://192.168.2.13:80/agentTrade/sellOrderManualConfirmFail",
+									data:{
+										"vipType":vipType,
+										"merchant":merchant
+									},
+									dataType: "json",
+									success:function(data){
+										$(".mt").css("display","none");
+//										vm.liLists.splice(index1,1);
+										if(vm.liLists[index1].state==1){
+											vm.liLists[index1].state=2;
+										}else{
+											vm.liLists[index1].state=1;
+										}
+										console.log(data.resultCode);
+									},
+									error:function(){
+									    console.log("操作失败！");
+									}
+						});
+					},
+					chafengSub : function(){
+						var setType=$("#types").val();
+						var index1=$("#keyHide").val();
+						var merchant = vm.liLists[index1].marchant;
+						console.log(setType);
+						console.log(index1);
+						console.log(merchant);
+						$.ajax({
+									type:"post",
+									url:"http://192.168.2.13:80/agentTrade/sellOrderManualConfirmFail",
+									data:{
+										"vipType":vipType,
+										"merchant":merchant
+									},
+									dataType: "json",
+									success:function(data){
+										$(".mts").css("display","none");
+//										vm.liLists.splice(index1,1);
+										if(vm.liLists[index1].set==1){
+											vm.liLists[index1].set=2;
+										}else{
+											vm.liLists[index1].set=1;
+										}
+										console.log(data.resultCode);
+									},
+									error:function(){
+									    console.log("操作失败！");
+									}
+						});
+					}
+	             }
+	         });
+    		$.ajax({
+						type:"post",
+						url:"http://192.168.2.13:80/agentTrade/sellExceptionOrder",
+						data:{
+							merchant:$("#merId").val(),
+							tel:$("#phone").val(),
+							pageNum:1
+						},
+						success:function(data){
+							console.log(data.resultData);
+							if(data.resultData.orders==6){
+								$(".none").css("display","block");
+								$(".tab_box_list").css("display","none");
+								$(".footer_page").css("display","none");		
+							}else{
+								$(".none").css("display","none");
+								$(".tab_box_list").css("display","block");
+								$(".footer_page").css("display","block");
+								vm.liLists=data.resultData.orders;
+								$(".data_all").html(data.resultData.totalResult);
+								$(".page_now").html(data.resultData.currentPage);
+								$(".page_all").html(data.resultData.totalPage);
+								$("#page_num").val($(".page_now").html());
+								
+							}
+						}
+       		})
+    		$("#clos1").click(function(){
+    			$(".mt1").css("display","none");
+    		})
+    		$("#selec_btn").click(function(){
+    			$.ajax({
+						type:"post",
+						url:"http://192.168.2.13:80/agentTrade/sellExceptionOrder",
+						data:{
+							merchant:$("#merId").val(),
+							tel:$("#phone").val(),
+							pageNum:1
+						},
+						success:function(data){
+							console.log(data.resultData);
+							if(data.resultData.orders==6){
+								$(".none").css("display","block");
+								$(".tab_box_list").css("display","none");
+								$(".footer_page").css("display","none");
+							}else{
+								$(".none").css("display","none");
+								$(".tab_box_list").css("display","block");
+								$(".footer_page").css("display","block");
+								vm.liLists=data.resultData.orders;
+								$(".data_all").html(data.resultData.totalResult);
+								$(".page_now").html(data.resultData.currentPage);
+								$(".page_all").html(data.resultData.totalPage);
+								$("#page_num").val($(".page_now").html());
+								
+							}
+						}
+       		})
+    		})
+    		$("#clos1").click(function(){
+				$(".mt1").css("display","none");
+			})
+    		$("#closs").click(function(){
+    			$(".mts").css("display","none");
+    		})
+       		$("#page_up").click(function(){
+	        	if($(".page_now").html()==1){
+	        		$(".mt1").css("display","block");
+	        		$("#tips1").html("亲~没有上一页了");
+	        	}else{
+	        		var page_now=parseInt($(".page_now").html())-1;
+	        		$(".page_now").html(page_now);
+	        		$("#page_num").val($(".page_now").html());
+	        		$.ajax({
+							type:"post",
+							url:"http://192.168.2.13:80/agentTrade/sellExceptionOrder",
+							data:{
+								merchant:$("#merId").val(),
+								tel:$("#phone").val(),
+								pageNum:page_now
+							},
+							success:function(data){
+								console.log(data.resultData);
+								vm.liLists=[];
+								vm.liLists=data.resultData.orders;
+								$(".page_now").html(data.resultData.currentPage);
+								$("#page_num").val($(".page_now").html());
+							},
+							error:function(){
+								console.log("操作失败!");
+							}
+						});
+	        	}
+        	})
+        $("#page_down").click(function(){
+        	if(parseInt($(".page_now").html())==parseInt($(".page_all").html())){
+        		$(".mt1").css("display","block");
+        		$("#tips1").html("亲~没有更多页数了");
+        	}else{
+        		var page_now=parseInt($(".page_now").html())+1;
+        		$(".page_now").html(page_now);
+        		$("#page_num").val($(".page_now").html());
+        		$.ajax({
+						type:"post",
+						url:"http://192.168.2.13:80/agentTrade/sellExceptionOrder",
+						data:{
+							merchant:$("#merId").val(),
+							tel:$("#phone").val(),
+							pageNum:page_now
+						},
+						success:function(data){
+							console.log(data.resultData);
+							vm.liLists=data.resultData.orders;
+							$(".page_now").html(data.resultData.currentPage);
+							$("#page_num").val($(".page_now").html());
+						},
+						error:function(){
+							console.log("操作失败!");
+						}
+					});
+        	}
+        })
+        $("#goto").click(function(){
+						        	if(Math.floor($("#page_num").val())<=parseInt($(".page_all").html()) && $("#page_num").val()>0){
+						        		var page_num=$("#page_num").val();
+						        		$("#page_num").val(Math.floor(page_num));
+						        		$(".page_now").html(Math.floor(page_num));
+						        		$.ajax({
+												type:"post",
+												url:"http://192.168.2.13:80/agentTrade/sellExceptionOrder",
+												data:{
+													merchant:$("#merId").val(),
+													tel:$("#phone").val(),
+													pageNum:Math.floor(page_num)
+												},
+												success:function(data){
+													console.log(data.resultData);
+													vm.liLists=data.resultData.orders;
+													$(".page_now").html(data.resultData.currentPage);			
+													$("#page_num").val($(".page_now").html());
+												},
+												error:function(){
+													console.log("操作失败!");
+												}
+											});
+						        	}else{
+						        		$(".mt1").css("display","block");
+						        		$("#tips1").html("亲~没有查找到该页数");
+						        		$("#page_num").val($(".page_now").html());
+						        	}	
+						        })
+        });
+     </script>
+</body>
+</html>

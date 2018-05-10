@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>资金冻结</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/public.css" />
+    <style>
+       html,body,div,span,i,img,ul,li{margin:0;padding:0;}
+       html,body{width:100%;height:100%;background:#eee;}
+       input{border:none;outline:none;}
+       ul,li{list-style:none;}
+      .public_main{width:100%;box-sizing:border-box;margin-bottom:30px;}
+      .search_box{width:100%;}
+      .input_box{width:100%;overflow:hidden;box-sizing:border-box;padding:0 20px;}
+      .input_box div{float:left;width:19%;height:40px;margin:25px 0 0 15px;}
+      .input_box div:first-child{margin-left:0px;}
+      .input_box div input{width:100%;height:100%;box-sizing:border-box;padding:3px 9px;}
+      .query_btn{width:160px;height:40px;position:relative;left:50%;margin:20px 0 0 -80px;line-height:40px;color:#fff;font-size:18px;text-align:center;}
+      .tab_box{width:100%;margin:15px 0 0 0;display: none;}
+      .tab_box_content{width:100%;border-radius:5px;box-sizing:border-box;padding:10px;text-align:center;margin:10px 0 0 0;}
+      .tab_box_content li:first-child{width:100%;height:40px;line-height:40px;background:#fff;border-radius: 5px;color: #333;}
+      .tab_box_title{margin-bottom:15px;}
+      .tab_box_list{width:100%;height:60px;line-height:60px;background:#fff;box-sizing:border-box;padding:3px;border-radius: 5px;overflow:hidden;vertical-align:middle;}
+      .tab_box_content li span{word-wrap:break-word;float:left;display:block;width:25%;height:100%;color:#323334;font-size:15px;}
+      .tab_box_content .tab_box_title span{color: #333;}
+      .business_owner{line-height:normal;box-sizing:border-box;padding:0 4px  0 4px;text-align:left;}
+      .tab_box_list:nth-child(odd){background:#f2f5fa;}
+      /*.tab_box_list span:last-child{color:#fe3e3e;}*/
+      .business_timer{line-height:normal;box-sizing:border-box;padding:10px 0;}
+	  .footer_page{margin-top:20px;text-align: center;display: none;}
+	  .footer_page .page_up,.footer_page .page_down,.footer_page .page_goto{cursor:pointer;background: #FE3636;padding:6px 10px;border-radius:4px;color: #f2f2f2;}
+      .footer_page .page_up:hover,.footer_page .page_down:hover,.footer_page .page_goto:hover{background: #Ff4f4f;}
+      .footer_page .page_num input{text-align:center;position:relative;top:-2px;width:30px;border: 1px solid #999;height: 24px;}
+      .footer_page .page_goto{margin-left: 60px;}
+      .page_count{margin-left: 20px;}
+      .page_count .data_all,.page_count .page_now,.page_count .page_all{color: #FE3636;font-size: 20px;}
+      .none{height:200px;line-height: 200px;display: none;}
+      .tab_box_title .left_Id,.tab_box_list .left_Id{width:8%;}
+      .tab_box_title .merId,.tab_box_list .merId{width:30%;}
+      .tab_box_title .moneyType,.tab_box_list .moneyType{width:8%;}
+      .tab_box_title .moneyAll,.tab_box_list .moneyAll{width:27%;}
+      .tab_box_title .moneyDj,.tab_box_list .moneyDj{width:27%;}
+      .input_box div{width:30%;}
+      .input_box .sec,.input_box .sec1{width:12%;margin-right:50px;}
+      .input_box .sec1{display: none;}
+      .input_box .tit{margin-left:50px;width:40px;line-height: 40px;}
+      .input_box div select{width:100%;height: 40px;border:1px solid #ccc;border-radius: 4px;color: #999;}
+      .input_box div input{border-radius: 4px;border:1px solid #ccc;outline: none;background: #fcfcfc;}
+      .query_btn{background: #FE3636;border-radius: 4px;}
+      .tab_box_list span{position: relative;}
+      .changes{border:1px solid #b2b2b2;padding:6px 8px;margin-left: 8px;position: absolute;right:8px;top:25%;}
+      [v-cloak] {
+			        display: none;
+			    }
+    </style>
+</head>
+<body>
+        <div class="public_main">
+          <div class="con_head">资金冻结</div> 
+           <!-- 查询顶部 -->
+            <div class="search_box">
+               <div class="input_box">   
+                    <div><input type="text" placeholder="商户号" id="merchant"></div>
+                    <div class="tit">币种:</div>
+                    <div class="sec">
+                    	<select id="moneyType">
+							<option v-cloak v-for="item in headLists" value="{{item.currencyType}}">{{item.enSimpleName}}</option>					
+						</select>
+                    </div>
+                    <div class="sec1">
+                    	<select class="moneyType" disabled="disabled">
+							<option value="0">暂无币种</option>					
+						</select>
+                    </div>
+                    <div><input type="text" placeholder="手机号" id="tel"></div>
+                </div>
+                <div class="query_btn" id="selec_btn">查询</div>
+            </div>
+            <!-- 表格部分 -->
+            <div class="tab_box">
+               <ul class="tab_box_content">
+                   <li class="tab_box_title">
+                    <span class="left_Id">序号</span>
+                    <span class="merId">商户号</span>
+                    <span class="moneyType">币种</span>
+                    <span class="moneyAll">可用金额</span> 
+                    <span class="moneyDj">冻结金额</span>
+                   </li>
+                   <li class="tab_box_list" v-for="list in liLists">
+                        <span class="left_Id">{{$index+1}}</span>
+                        <span class="merId">{{list.merchant}}</span>
+                        <span class="moneyType">{{list.category}}</span>
+                        <span class="moneyAll">{{list.coin}}<input class="changes" type="button" value="冻结" id="dongjie" @click="moneyDj($index)" /></span>
+                        <span class="moneyDj">{{list.tdcoin}}<input class="changes" type="button" value="解冻" id="jiedong" @click="moneyJd($index)" /></span> 
+                        
+                   </li>
+                   <li class="none">暂时还没有数据哦~</li>
+               </ul>
+            </div>
+        </div>
+        <input type="hidden" id="hide" />
+        <input type="hidden" id="hide1" />
+        <input type="hidden" id="hideDj" />
+        <input type="hidden" id="hideJd" />
+        <input type="hidden" id="types" />
+        <!--<div class="mt" id="modal1">
+						    <div class="mt-dialog">
+						        <div class="mt-content">
+						        	<span class="clos" id="clos">&times;</span>
+						            <h4>小提示：</h4>
+						                <div class="mone">  
+						                </div>
+						                <p id="tips"></p>
+						                <div class="yi">
+						                	<span class="close" id="clos1">关闭</span>
+						                </div>
+						                
+						        </div>
+						    </div>
+		</div>-->
+		<div class="mt1" id="modal2">
+						    <div class="mt-dialog">
+						        <div class="mt-content">
+						        	<span class="clos" id="clos2">&times;</span>
+						            <h4>请输入金额：</h4>
+						                <div class="mone">  
+						                </div>
+						                <div class="money">
+						                	<input type="text" id="money" />
+						                </div>
+						                <div class="moneyyz" id="moneyyz">
+						                	
+						                </div>
+						                <div class="yi">
+						                	<span class="subs" id="subs">确认</span>
+						                </div>
+						                
+						        </div>
+						    </div>
+		</div>
+    <script src="js/jquery-3.2.1.js"></script>		
+    <script src="js/vue.min.js"></script>
+    <script type="text/javascript" src="js/close.js" ></script>
+    <script>
+       $(function(){
+	       	var vm=new Vue({
+	             el:".public_main",
+	             data:{
+	             	headLists:[],
+	                liLists:[]
+	             },
+	             methods:{
+	             	moneyDj : function(index){
+	             		var id = vm.liLists[index].id;
+	             		var category=vm.liLists[index].category;
+	             		var dj=vm.liLists[index].coin;
+	             		$("#hide").val(id);
+	          			$("#hide1").val(category);
+	          			$("#hideDj").val(dj);
+						type=1;
+						$(".mt1").css("display","block");			
+					},
+					moneyJd : function(index){		
+						var id = vm.liLists[index].id;
+	             		var category=vm.liLists[index].category;
+	
+	             		var jd=vm.liLists[index].tdcoin;
+	             		$("#hide").val(id);
+	          			$("#hide1").val(category);
+	          			$("#hideJd").val(jd);
+						type=2;
+						$(".mt1").css("display","block");
+					}
+	             }
+	         });
+			$.ajax({
+					type:"post",
+					url:"http://192.168.2.14:80/agentTrade/CurrencyList",
+					data:{
+					
+					},
+					success:function(data){
+						console.log(data.resultData);
+						if(data.resultData==6){
+							$(".sec").css("display","none");
+							$(".sec1").css("display","block");
+							$("#selec_btn").attr("disabled","disabled");
+							$("#types").val(1);
+						}else{
+							$(".sec").css("display","block");
+							$(".sec1").css("display","none");
+							vm.headLists=data.resultData;
+						}
+					}
+	       		})
+    		$("#selec_btn").click(function(){
+    			if($("#types").val()==1){
+    				console.log("无币种");
+    			}else{
+    					$(".tab_box").css("display","block");
+			    		$.ajax({
+							type:"post",
+							url:"http://192.168.2.14:80/agentTrade/selectPersonalForOne",
+							data:{
+								DJMerchant:$("#merchant").val(),
+								category:$("#moneyType option:selected").val(),
+								tel:$("#tel").val()
+							},
+							success:function(data){
+								console.log(data.resultData);
+								console.log(data.resultCode);
+								console.log(data.resultMsg);
+								if(data.resultCode=="0000"){
+									if(data.resultData==6){
+										$(".none").css("display","block");
+										$(".tab_box_list").css("display","none");
+									}else{
+										$(".none").css("display","none");
+										$(".tab_box_list").css("display","block");
+										vm.liLists=data.resultData;
+									}
+								}else{
+									$(".none").css("display","block");
+									$(".none").html(data.resultMsg);
+									$(".tab_box_list").css("display","none");
+									$(".footer_page").css("display","none");
+								}
+							}
+       					})	
+    			}
+
+			    
+    			
+    		})
+ 			$("#money").blur(function(){
+ 				var allReg=/^[0-9]+(.[0-9]{1,4})?$/;
+ 				if($("#money").val()==""){
+	    			$("#moneyyz").html("金额不能为空!");
+		    	}else if(!allReg.test($("#money").val())){
+		    		$("#moneyyz").html("金额大于0且最多保留4位小数!");
+		    	}else{
+		    		$("#moneyyz").html("");
+		    	}
+ 			})
+ 			$("#money").focus(function(){
+ 				$("#moneyyz").html("");
+ 			})
+ 			$("#subs").click(function(){
+ 				var allReg=/^[0-9]+(.[0-9]{1,4})?$/;
+ 				if($("#money").val()==""){
+	    		$("#moneyyz").html("金额不能为空!");
+		    	}else if(!allReg.test($("#money").val())){
+		    		$("#moneyyz").html("金额大于0且最多保留4位小数!");
+		    	}else{
+			    	  var id1=$("#hide").val();
+			    	  var category1=$("#hide1").val();
+			    	  if(type==1){
+				    	  	if(parseFloat($("#money").val())>parseFloat($("#hideDj").val())){
+				    	  	
+				    	  	$("#moneyyz").html("金额不足！");
+					    	}else{
+					    	  	    $.ajax({
+										type:"post",
+										url:"http://192.168.2.14:80/agentTrade/DJCurrency",
+										data:{
+											DJMerchant:$("#merchant").val(),
+											id:id1,
+											category:category1,
+											money:$("#money").val(),
+											type:type
+										},
+										success:function(data){
+//											alert(data.resultCode);
+//											alert(data.resultMsg);
+											var resultCode=data.resultCode;
+											var resultMsg=data.resultMsg;
+											if(resultCode==0000){
+												location.href="success.html?resultMsg="+encodeURI(resultMsg);
+											}else{
+												location.href="fail.html?resultMsg="+encodeURI(resultMsg);
+											}
+						
+										}
+			       					})
+					    	}
+			    	  }else{
+				    	  	if(parseFloat($("#money").val())>parseFloat($("#hideJd").val())){
+					    	  
+					    	  	$("#moneyyz").html("金额不足！");
+						    	}else{
+						    	  	    $.ajax({
+											type:"post",
+											url:"http://192.168.2.14:80/agentTrade/DJCurrency",
+											data:{
+												DJMerchant:$("#merchant").val(),
+												id:id1,
+												category:category1,
+												money:$("#money").val(),
+												type:type
+											},
+											success:function(data){
+//												alert(data.resultCode);
+//												alert(data.resultMsg);
+												var resultCode=data.resultCode;
+												var resultMsg=data.resultMsg;
+												if(resultCode==0000){
+													location.href="success.html?resultMsg="+encodeURI(resultMsg);
+												}else{
+													location.href="fail.html?resultMsg="+encodeURI(resultMsg);
+												}
+							
+											}
+				       					})
+						    	}
+			    	  }
+//			    	  var dj1=$("#hideDj").val();
+//			    	  alert(dj1);
+			    	  
+		    		
+		    	}
+ 			})
+        });
+     </script>
+</body>
+</html>

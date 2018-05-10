@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>币种列表</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/public.css" />
+    <style>
+       html,body,div,span,i,img,ul,li{margin:0;padding:0;}
+       html,body{width:100%;height:100%;background:#eee;}
+       input{border:none;outline:none;}
+       ul,li{list-style:none;}
+      .public_main{width:100%;box-sizing:border-box;margin-bottom:30px;}
+      .tab_box{width:100%;margin:15px 0 0 0;}
+      .tab_box_content{width:100%;border-radius:5px;box-sizing:border-box;padding:10px;text-align:center;margin:10px 0 0 0;}
+      .tab_box_content li:first-child{width:100%;height:40px;line-height:40px;background:#fff;border-radius: 5px;color: #333;}
+      .tab_box_title{margin-bottom:15px;}
+      .tab_box_list{width:100%;height:60px;line-height:60px;background:#fff;box-sizing:border-box;padding:3px;border-radius: 5px;overflow:hidden;vertical-align:middle;}
+      .tab_box_content li span{word-wrap:break-word;float:left;display:block;width:25%;height:100%;color:#323334;font-size:15px;}
+      .tab_box_content .tab_box_title span{color: #333;}
+      .business_owner{line-height:normal;box-sizing:border-box;padding:0 4px  0 4px;text-align:left;}
+      .tab_box_list:nth-child(odd){background:#f2f5fa;}
+      /*.tab_box_list span:last-child{color:#fe3e3e;}*/
+      .business_timer{line-height:normal;box-sizing:border-box;padding:10px 0;}
+	  .footer_page{margin-top:20px;text-align: center;display: none;}
+	  .footer_page .page_up,.footer_page .page_down,.footer_page .page_goto{cursor:pointer;background: #FE3636;padding:6px 10px;border-radius:4px;color: #f2f2f2;}
+      .footer_page .page_up:hover,.footer_page .page_down:hover,.footer_page .page_goto:hover{background: #Ff4f4f;}
+      .footer_page .page_num input{text-align:center;position:relative;top:-2px;width:30px;border: 1px solid #999;height: 24px;}
+      .footer_page .page_goto{margin-left: 60px;}
+      .page_count{margin-left: 20px;}
+      .page_count .data_all,.page_count .page_now,.page_count .page_all{color: #FE3636;font-size: 20px;}
+      .none{height:200px;line-height: 200px;display: none;}
+      .left_Id{width:10% !important;}
+      .moneyType{width:26% !important;}
+      .enName{width:26% !important;}
+      .cnName{width:26% !important;}
+      .update{width:12% !important;}
+      .changes{border:1px solid #b2b2b2;padding:6px 8px;margin-left: 8px;}
+      [v-cloak] {
+			        display: none;
+			    }
+    </style>
+</head>
+<body>
+        <div class="public_main">
+          <div class="con_head">币种列表</div>
+            <!-- 表格部分 -->
+            <div class="tab_box">
+               <ul class="tab_box_content">
+                   <li class="tab_box_title">
+                    <span class="left_Id">序号</span>
+                    <span class="moneyType">币种id</span>
+                    <span class="enName">英文简称</span> 
+                    <span class="cnName">中文名称</span>
+                    <span class="update">操作</span>
+                   </li>
+                   <li class="tab_box_list" v-cloak v-for="list in liLists">
+                        <span class="left_Id">{{list.id}}</span>
+                        <span class="moneyType">{{list.currencyType}}</span>
+                        <span class="enName">{{list.enSimpleName}}</span>
+                        <span class="cnName">{{list.chName}}</span>
+                        <span class="update"><a href="updateMoneyType.html?currencyType={{list.currencyType}}"><input class="changes" type="button" value="更改" id="updates" /></a></span>
+                   </li>
+                   <li class="none">暂时还没有数据哦~</li>
+               </ul>
+            </div>
+        </div>
+    <script src="js/jquery-3.2.1.js"></script>		
+    <script src="js/vue.min.js"></script>
+    <script>
+       $(function(){
+	       	var vm=new Vue({
+	             el:".tab_box",
+	             data:{
+	                 liLists:[],
+	             }
+	         });
+    		$.ajax({
+						type:"post",
+						url:"http://192.168.2.143:8080/agentTrade/selectMerchant",
+						data:{
+							
+						},
+						success:function(data){
+							console.log(data);
+							if(data.resultData==6){
+								$(".none").css("display","block");
+								$(".tab_box_list").css("display","none");
+							}else{
+								vm.liLists=data.resultData;
+							}
+						}
+       	})
+        });
+     </script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cookeis实例</title>
+    <style>
+        html,
+        body,
+        div,
+        span,
+        input {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        .input_cookie,
+        .out_cookie {
+            width: 500px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            text-align: center;
+            padding: 20px;
+            margin: 0 auto;
+        }
+
+        .input_cookie span,
+        .out_cookie span {
+            display: inline-block;
+            width: 300px;
+        }
+
+        span input {
+            display: inline-block;
+            width: 100%;
+            border: 1px solid #333;
+            border-radius: 4px;
+            height: 30px;
+            box-sizing: border-box;
+            padding: 0 8px;
+            outline: none;
+        }
+
+        .cookie_btn {
+            width: 150px;
+            height: 24px;
+            line-height: 24px;
+            background: #fff;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            color: #333;
+            margin: 15px 0 0 0;
+        }
+
+        .show_cookie {
+            display: inline-block;
+            margin: 15px;
+            box-sizing: border-box;
+            padding: 0 10px;
+        }
+    </style>
+</head>
+
+<body>
+	<div class="con">
+		<div class="input_cookie">
+        <span>
+            <input type="text" class="ipts">
+        </span>
+        <span class="cookie_btn">添加</span>
+    </div>
+    <div class="out_cookie">
+        <span class="showData">显示数据</span>
+        <span class="show_cookie"></span>
+    </div>
+    <div class="more_main">
+							<div v-for="list in liLists">
+								<span class="bank_name">
+									<img v-bind:src="list.img" />
+									<span>{{list.name}}</span>
+									<span>储蓄卡</span>
+								</span>
+								<!--<span class="last last1">(<span class="last_id">1234</span>)</span>-->
+							</div>
+	</div>
+	</div>
+    
+    <script src="js/jquery-3.2.1.js"></script>
+    <script type="text/javascript" src="js/vue.min.js" ></script>
+    <script>
+        $(function () {
+        	                var ss=[];
+		var vm=new Vue({
+			            el:".con",
+			            data:{
+			                liLists:[]
+			            }
+			        });        	
+            var cdc="";
+            function setCookie(name, value) {
+                document.cookie =name+"="+value;
+            };
+            function savecookie() {
+            	bank="CMBC";
+                cdc=cdc.concat("{name:"+"'"+String($(".ipts").val())+"'"+",img:'img/"+bank+".png',bank:"+"11111"+"},");
+                setCookie('test',encodeURI(cdc));
+            }
+            $(".cookie_btn").click(function(){
+                if($(".ipts").val().length!=0){
+                    savecookie();
+                }
+                var test=decodeURI(document.cookie.substring(5,document.cookie.length-1))
+                $(".show_cookie").html(test);        
+//              console.log(eval('(' + test + ')'));
+                ss.push(eval('(' + test + ')'));
+//              console.log(ss);
+                vm.liLists=ss;
+            });
+           
+        });
+    </script>
+</body>
+
+</html>

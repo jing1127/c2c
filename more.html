@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			*{margin:0;padding: 0;}
+			body{background: #F7F6F6;width:100%;}
+			.box{width:100%;font-family: "黑体";font-size: 15px;}
+			.box .box-container{margin:120px auto;box-sizing:border-box;padding:20px;background:#fff;border:1px solid #ddd;box-shadow: 3px 3px 10px #b8b8b8;border-radius:5px;width:860px;height: 520px;}
+			.box-head{margin-top:1px;margin-bottom: 26px;}
+			.box-head .right{margin-left: 220px;}
+			.box-express{margin-bottom: 36px;overflow:hidden;}
+			.box-head .left,.box-express .left,.box-img .left{float: left;}
+			.box-express .right,.box-img .right{margin-left: 82px;}
+			.box_img{clear: left;}
+			.box-img .right div{float:left;margin-right:32px;width:210px;height:315px;border:1px solid #B2B2B2;border-radius: 5px;}
+			.box-img .img1,.box-img .img2,.box-img .img3{text-align: center;position: relative;}
+			.box-img img{left:0;right:0;top:0;bottom:0;margin:auto;position:absolute;max-width: 200px;max-height: 300px;vertical-align: middle;}
+			.box .box-container{margin-bottom: 60px;}
+			.box .status{margin:0 auto;background: #FE3636;border-radius:5px;width:180px;padding:8px 0px;color: #fff;text-align: center;cursor: pointer;}
+		</style>
+	</head>
+	<body>
+		<div class="box">
+			<div class="box-container">
+				<div class="box-head">
+					<div class="left"><span>手机型号：</span><span>{{data.phoneType}}</span></div>
+					<div class="right"><span>手机号：</span><span>{{data.tel}}</span></div>
+				</div>
+				<div class="box-express">
+					<div class="left">问题描述：</div>
+					<div class="right">{{data.problem}}</div>
+				</div>
+				<div class="box-img">
+					<div class="left">上传图片：</div>
+					<div class="right">
+						<div class="img1">
+							<img :src="data.file0" />
+						</div>
+						<div class="img2">
+							<img :src="data.file1" />
+						</div>
+						<div class="img3">
+							<img :src="data.file2" />
+						</div>
+					</div>
+					
+				</div>
+			</div>
+			<div class="status"></div>
+		</div>
+		<script src="js/jquery-3.2.1.js"></script>		
+    	<script src="js/vue.min.js"></script>
+    	<script>
+    		//获取地址栏
+	    	function UrlSearch()
+				{                 
+				    var name,value;
+				    var str=location.href; //取得整个地址栏
+				    var num=str.indexOf("?")
+				    str=str.substr(num+1); //取得所有参数   stringvar.substr(start [, length ]
+				    var arr=str.split("&"); //各个参数放到数组里
+				    for(var i=0;i < arr.length;i++){
+				        num=arr[i].indexOf("=");
+				        if(num>0){
+				            name=arr[i].substring(0,num);
+				            value=arr[i].substr(num+1);
+				            this[name]=value;
+				        }
+				    }
+				}
+				var Request=new UrlSearch(); //实例化
+				var id=Request.id;
+				var vm=new Vue({
+					el:".box",
+					data:{
+						data:[]
+					}
+				})
+				var status="";
+				$.ajax({
+								type:"post",
+								url:"http://192.168.2.13:8080/client/showProblem",
+								data:{
+									"id":id
+								},
+								success:function(data){
+									console.log(data);
+									vm.data=data.resultData;
+									status=data.resultData.status;
+									if(status=="1"){
+										$(".status").html("未处理");
+									}else if(status=="2"){
+										$(".status").html("正在处理");
+									}else if(status=="3"){
+										$(".status").html("已处理");
+									}else{
+										$(".status").html("error");
+									}
+								},
+					            error:function(){
+						            console.log("操作失败!");
+								}
+						})
+				
+						$(".status").bind('click',function(){
+							if(status=="1"){
+										$.ajax({
+												type:"post",
+												url:"http://192.168.2.13:8080/client/updateProblemStatus",
+												data:{
+													"id":id,
+													"status":"1"
+												},
+												success:function(data){
+													console.log(data);
+													if(data.resultCode=="0000"){
+														$(".status").html("正在处理");
+														status="2";
+													}else{
+														console.log("处理失败");
+													}
+													
+												},
+												error:function(){
+													console.log("修改状态请求失败");
+												}
+											});
+							}else if(status=="2"){
+										$.ajax({
+												type:"post",
+												url:"http://192.168.2.13:8080/client/updateProblemStatus",
+												data:{
+													"id":id,
+													"status":"2"
+												},
+												success:function(data){
+													console.log(data);
+													if(data.resultCode=="0000"){
+														$(".status").html("已处理");
+														status="3";
+													}else{
+														console.log("处理失败");
+													}
+													
+												},
+												error:function(){
+													console.log("修改状态请求失败");
+												}
+											});
+							}else{
+								$.ajax({
+									type:"post",
+									url:"http://192.168.2.13:8080/client/updateProblemStatus",
+									data:{
+										"id":id,
+										"status":"3"
+									},
+									success:function(data){
+										console.log(data);
+										
+									}
+								});
+							}
+						})
+									
+    	</script>
+	</body>
+</html>
